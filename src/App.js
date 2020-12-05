@@ -1,24 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Router, Route, Switch } from 'react-router-dom';
+import RegisterScreen from './views/registerScreen';
+import LoginScreen from './views/loginScreen';
+import OtpScreen from './views/otpScreen';
+import appHistory from './appHistory';
 
 function App() {
   return (
+    <Router history={appHistory}>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <Switch>
+        <Route path="/register" component={RegisterScreen}></Route>
+        <Route path="/login" component={LoginScreen}></Route>
+        <Route path="/otp" component={OtpScreen}></Route>
+        <Route path="/" component={LoginScreen}></Route>
+    </Switch>
     </div>
+    </Router>
   );
 }
 
