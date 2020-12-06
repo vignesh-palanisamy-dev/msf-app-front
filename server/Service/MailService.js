@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config({ path: require('find-config')('env') });
 const transporter = nodemailer.createTransport({
@@ -30,10 +31,11 @@ function sendMail(userName, email, otp) {
 }
 
 function getOTPTemplate(userName, opt) {
+    let filePath =  path.join(__dirname, '..', 'Utils','OtpMailUtil.html');
     return new Promise((resolve, reject) => {
-
+        console.log("Mail file path", filePath);
         // OtpMailUtil.html file and replace username and otp 
-        fs.readFile('../Utils/OtpMailUtil.html', 'utf8', function (error, data) {
+        fs.readFile(filePath, 'utf8', function (error, data) {
             if (error) {
                 reject(error);
             }
