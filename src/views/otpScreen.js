@@ -20,7 +20,7 @@ export default function Otp(props) {
   
 
   const [userName,setUserName] = useState('');
-  const [otp,setOtp] = useState('');
+  const [otp,setOtp] = useState(null);
   const [showValidateError,setShowValidateError] = useState(false);
   const [showOTP,setShowOTP] = useState(false);
   const [showPassword,setShowPassword] = useState(false);
@@ -68,7 +68,7 @@ export default function Otp(props) {
 
   const onVerifyClick = (event) => {
     let isValidateError;
-    if(otp === "" ){
+    if(!otp){
         isValidateError = true;
         setShowValidateError(true);
         toast.error("Missing Required Field.");
@@ -152,14 +152,14 @@ export default function Otp(props) {
                 id="otp"
                 name="otp"
                 label="OTP"
-                type="text"
+                type="number"
                 size="small"
                 variant="outlined"
                 required
                 fullWidth
                 value={otp}
                 error={showValidateError &&  otp === ""}
-                onChange={(event)=>setOtp(event.target.value.trim())}
+                onChange={(event)=>setOtp(event.target.value)}
               />
             </Grid> : null}
 
@@ -227,6 +227,7 @@ export default function Otp(props) {
           color="primary"
           style={{marginTop:"16px", marginBottom:"16px"}}
           onClick={onOTPClick}
+          disabled={showLoader}
         >
           OTP
         </Button>}

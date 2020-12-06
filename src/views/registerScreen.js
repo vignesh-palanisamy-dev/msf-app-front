@@ -204,7 +204,7 @@ export default function SignUp(props) {
                 fullWidth
                 value={phoneNo}
                 error={(showValidateError && (phoneNo === "" || phoneNo === 0))||(userExistError === "phoneNo")}
-                onChange={(event)=>setPhoneNo(event.target.value.trim())}
+                onChange={(event)=>setPhoneNo(event.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -242,7 +242,7 @@ export default function SignUp(props) {
                 size="small"
                 fullWidth
                 value={experience}
-                onChange={(event)=>setExperience(event.target.value.trim())}
+                onChange={(event)=>setExperience(event.target.value)}
               />
             </Grid>
           </Grid>
