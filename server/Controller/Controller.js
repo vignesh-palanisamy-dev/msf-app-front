@@ -30,7 +30,7 @@ controller.use(cookieParser());
 
 // Allow all origin to access this server resource.
 // In Production :  Need to allow particular origin. 
-controller.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+controller.use(cors({ credentials: true, origin: env.parsed.CROS_ORIGIN}));
 
 
 // parse data based on content-type (json/byte)

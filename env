@@ -8,3 +8,4 @@ DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
 DB_SCHEMA= public
 TEMP_DATABASE_URL=postgres://lducehhanslhhq:c2081cbe0663856ce8220b74e2da7e7c670af11bcd198a2b92f6f045f53d2327@ec2-54-237-135-248.compute-1.amazonaws.com:5432/d8f5glfk0e49bb
 TEMP_DB_SCHEMA= d8f5glfk0e49bbp
+CROS_ORIGIN= https://msf-app-front.herokuapp.com

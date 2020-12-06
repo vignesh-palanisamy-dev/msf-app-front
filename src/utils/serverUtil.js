@@ -1,7 +1,7 @@
 let contextPath = '/msf-app-serve-node';
 
 function serverIp() {
-    return 'http://localhost:5000' + contextPath;
+    return 'https://msf-app-front.herokuapp.com' + contextPath;
 }
 
 export { serverIp };
