@@ -33,7 +33,7 @@ function getOTPTemplate(userName, opt) {
     return new Promise((resolve, reject) => {
 
         // OtpMailUtil.html file and replace username and otp 
-        fs.readFile('Utils/OtpMailUtil.html', 'utf8', function (error, data) {
+        fs.readFile('../Utils/OtpMailUtil.html', 'utf8', function (error, data) {
             if (error) {
                 reject(error);
             }
