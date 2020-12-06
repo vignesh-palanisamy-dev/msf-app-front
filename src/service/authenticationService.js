@@ -11,6 +11,9 @@ function register(datamap) {
 }
 
 function login(user_name, phone_no, password) {
+    if(isNaN(phone_no)){
+        phone_no=0;
+    }
     return new Promise((resolve, reject) => {
         axios.post(serverUtil.serverIp() + '/login', { user_name,phone_no, password },{withCredentials: true, credentials: 'include'}).then(function (response) {
             resolve(loggerUtil.handleResponse(response));
@@ -19,6 +22,9 @@ function login(user_name, phone_no, password) {
 }
 
 function forgetPassword(user_name, phone_no) {
+    if(isNaN(phone_no)){
+        phone_no=0;
+    }
     return new Promise((resolve, reject) => {
         axios.post(serverUtil.serverIp() + '/forgetPassword', { user_name, phone_no },{withCredentials: true, credentials: 'include'}).then(function (response) {
             resolve(loggerUtil.handleResponse(response));
@@ -27,6 +33,9 @@ function forgetPassword(user_name, phone_no) {
 }
 
 function updatePassword(user_name, phone_no, password) {
+    if(isNaN(phone_no)){
+        phone_no=0;
+    }
     return new Promise((resolve, reject) => {
         axios.put(serverUtil.serverIp() + '/updatePassword', { user_name, phone_no, password },{withCredentials: true, credentials: 'include'}).then(function (response) {
             resolve(loggerUtil.handleResponse(response));

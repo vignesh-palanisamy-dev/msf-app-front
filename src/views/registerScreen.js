@@ -43,7 +43,7 @@ export default function SignUp(props) {
   const onRegisterClick = (event) => {
     let isValidateError;
     if((userName === "" || password === "" ||  reTypePassword === "" || 
-       emailId === "" ||  phoneNo === "") && (!isValidateError)){
+       emailId === "" ||  phoneNo === 0 || phoneNo === "") && (!isValidateError)){
         isValidateError=true;
         setShowValidateError(true);
         toast.error("Missing Required Field.");
@@ -203,7 +203,7 @@ export default function SignUp(props) {
                 required
                 fullWidth
                 value={phoneNo}
-                error={(showValidateError && phoneNo === "")||(userExistError === "phoneNo")}
+                error={(showValidateError && (phoneNo === "" || phoneNo === 0))||(userExistError === "phoneNo")}
                 onChange={(event)=>setPhoneNo(event.target.value.trim())}
               />
             </Grid>

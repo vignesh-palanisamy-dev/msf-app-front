@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import { forgetPassword , updatePassword } from '../service/authenticationService';
 import * as encryptUtil from '../utils/encryptUtil';
 import { viewProfile } from '../service/profileService';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default function Otp(props) {
   const classes = useStyles();
@@ -28,7 +29,7 @@ export default function Otp(props) {
   const [reTypePassword,setReTypePassword] = useState('');
   const [secretOtp,setSecretOtp] = useState(null);
   const [passwordError,setPasswordError] = useState(false);
-
+  const [showLoader,setShowLoader] = useState(false);
 
   useEffect(() =>{
     viewProfile().then((response) =>{
@@ -50,12 +51,17 @@ export default function Otp(props) {
     if(isValidateError){
         return;
       }
+      setShowLoader(true);
       forgetPassword(userName , parseInt(userName)).then((response) =>{
         if(response?.otp){
           let otp = response.otp;
+          console.log("Exceptional Case Use OTP : ", otp);
           setSecretOtp(parseInt(otp));
           setShowOTP(true);
         }
+        setShowLoader(false);
+      }).catch(()=>{
+        setShowLoader(false);
       });
     event.preventDefault();
   };
@@ -111,6 +117,8 @@ export default function Otp(props) {
 
   return (
     <Container maxWidth="xs" style={{background:"#ffff", borderRadius:"5px"}} >
+      {showLoader ? <CircularProgress style={{marginTop: "16px",
+                 position: "absolute"}} /> : null}
       <div className={classes.container}>
         <Avatar style={{ 
           background: 'linear-gradient(48deg, rgb(38 194 199 / 58%) 30%, rgb(0 43 255 / 99%) 90%)',
