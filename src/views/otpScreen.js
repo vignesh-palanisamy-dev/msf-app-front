@@ -78,7 +78,7 @@ export default function Otp(props) {
     if(isValidateError){
         return;
       }
-      if(otp !== secretOtp){
+      if(parseInt(otp) !== secretOtp){
         toast.error("Invalid OTP.");
         return;
       }
