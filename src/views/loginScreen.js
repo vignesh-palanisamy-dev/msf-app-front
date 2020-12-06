@@ -8,21 +8,16 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import '../App.css';
+import {  toast } from 'react-toastify';
+import { login } from '../service/authenticationService';
 
 export default function LogIn(props) {
-  console.warn(props);
   const classes = useStyles();
   const history = useHistory();
   
-
   const [userName,setUserName] = useState('');
   const [password,setPassword] = useState('');
   const [showValidateError,setShowValidateError] = useState(false);
-
-
 
   const onLoginClick = (event) => {
     let isValidateError;
@@ -36,7 +31,9 @@ export default function LogIn(props) {
     if(isValidateError){
       return;
     }
-    toast.success("Login Successfully.");
+    login(userName,parseInt(userName), password).then(()=>{
+      history.push("/home");
+    });
     event.preventDefault();
   };
 
@@ -57,7 +54,7 @@ export default function LogIn(props) {
               <TextField
                 id="user_name"
                 name="user_name"
-                label="User Name"
+                label="User Name / Phone No"
                 size="small"
                 variant="outlined"
                 required
@@ -108,9 +105,6 @@ export default function LogIn(props) {
             </Grid>
           </Grid>
       </div>
-      <ToastContainer
-      position="bottom-left"
-      hideProgressBar />
       </Container>
   );
 }

@@ -7,13 +7,11 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import Typography from '@material-ui/core/Typography';
-import 'react-toastify/dist/ReactToastify.css';
-import '../App.css';
+import { forgetPassword , updatePassword } from '../service/authenticationService';
 
 export default function Otp(props) {
-  console.warn(props);
   const classes = useStyles();
   const history = useHistory();
   
@@ -26,6 +24,7 @@ export default function Otp(props) {
   const [email,setEmail] = useState("abcd@gmail.com");
   const [password,setPassword] = useState('');
   const [reTypePassword,setReTypePassword] = useState('');
+  const [secretOtp,setSecretOtp] = useState(null);
   const [passwordError,setPasswordError] = useState(false);
 
   const onOTPClick = (event) => {
@@ -35,12 +34,19 @@ export default function Otp(props) {
         setShowValidateError(true);
         toast.error("Missing Required Field.");
     }else{
-       setShowOTP(true);
       setShowValidateError(false);
     }
     if(isValidateError){
         return;
       }
+      forgetPassword(userName , parseInt(userName)).then((response) =>{
+        if(response?.otp){
+          let otp = response.otp;
+          console.log(otp);
+          setSecretOtp(otp);
+          setShowOTP(true);
+        }
+      });
     event.preventDefault();
   };
 
@@ -51,15 +57,20 @@ export default function Otp(props) {
         setShowValidateError(true);
         toast.error("Missing Required Field.");
     }else{
-        setShowOTP(false);
-        setShowPassword(true);
       setShowValidateError(false);
     }
     if(isValidateError){
         return;
       }
+      if(otp !== secretOtp){
+        toast.error("Invalid OTP.");
+        return;
+      }
+      setShowOTP(false);
+      setShowPassword(true);
+      setSecretOtp(null);
       toast.success("OTP Verified Successfully.");
-    event.preventDefault();
+     event.preventDefault();
   };
 
   const onUpdatePasswordClick = (event) => {
@@ -81,10 +92,10 @@ export default function Otp(props) {
         if(isValidateError){
             return
         }
-
-    toast.success("Password Updated Successfully.");
-    history.push('/login')
-    event.preventDefault();
+        updatePassword(userName , parseInt(userName),password).then(() =>{
+          history.push('/login');
+        });
+        event.preventDefault();
   };
 
   return (
@@ -201,9 +212,6 @@ export default function Otp(props) {
           OTP
         </Button>}
       </div>
-      <ToastContainer
-      position="bottom-left"
-      hideProgressBar />
       </Container>
   );
 }

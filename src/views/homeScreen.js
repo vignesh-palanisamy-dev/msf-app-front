@@ -1,17 +1,18 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import SupervisedUserCircleOutlined from '@material-ui/icons/SupervisedUserCircleOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
 import {  toast } from 'react-toastify';
-import { register } from '../service/authenticationService';
+import { viewProfile , updateProfile } from '../service/profileService';
+import { logout } from '../service/authenticationService';
 
-export default function SignUp(props) {
+export default function Home(props) {
   const classes = useStyles();
   const history = useHistory();
   
@@ -29,9 +30,44 @@ export default function SignUp(props) {
   const [passwordError,setPasswordError] = useState(false);
   const [emailError,setEmailError] = useState(false);
   const [userExistError,setUserExistError] = useState("");
+  const [isDisable,setIsDisable] = useState(true);
 
+  useEffect(() =>{
+    viewProfile().then((response) =>{
+        if(response?.userData){
+            let userData = response.userData;
+            setFirstName(userData.first_name);
+            setLastName(userData.last_name);
+            setUserName(userData.user_name);
+            setPassword(userData.password);
+            setReTypePassword(userData.password);
+            setEmailId(userData.email_id);
+            setPhoneNo(userData.phone_no);
+            setDateOfBirth(userData.d_o_b);
+            setCompany(userData.company_name);
+            setExperience(userData.experience);
+          }else{
+            history.push("/login");
+          }
+    }).catch(() =>{
+       history.push("/login");
+    });
+  },[]);
 
-  const onRegisterClick = (event) => {
+const onEditClick = () =>{
+    setIsDisable(false);
+}
+
+const onLogOutClick =() =>{
+    logout().then(() =>{
+        history.push("/login");
+    });
+}
+
+const onCancelClick = () =>{
+    setIsDisable(true);
+}
+  const onSaveClick = (event) => {
     let isValidateError;
     if((userName === "" || password === "" ||  reTypePassword === "" || 
        emailId === "" ||  phoneNo === "") && (!isValidateError)){
@@ -58,7 +94,7 @@ export default function SignUp(props) {
  if(isValidateError){
    return;
  }
- let dataMap = {user_name : userName, 
+ let updateMap = {user_name : userName, 
            password , phone_no : phoneNo,
            email_id : emailId, 
            first_name : firstName,
@@ -67,8 +103,8 @@ export default function SignUp(props) {
            company_name: company,
            experience : experience};
 
- register(dataMap).then(() =>{
-   history.push("/login");
+ updateProfile(updateMap).then(() =>{
+    setIsDisable(true);
  }).catch(error =>{
   if(error.response?.data?.result?.userData){
     let userData = error.response.data.result.userData;
@@ -90,10 +126,19 @@ export default function SignUp(props) {
         <Avatar style={{ 
           background: 'linear-gradient(48deg, rgb(38 194 199 / 58%) 30%, rgb(0 43 255 / 99%) 90%)',
           marginTop:"16px"}}>
-          <LockOutlinedIcon />
+          <SupervisedUserCircleOutlined />
         </Avatar>
+        <Button
+          type="submit"
+          variant="contained"
+          color="default"
+          style={{right:"0px",top:"16px", position:"absolute"}}
+          onClick={onLogOutClick}
+        >
+          Logout
+        </Button>
         <h4 style={{lineHeight:"0px",paddingBottom:"8px"}} color="textSecondary">
-          Register
+          Hi {userName}
         </h4>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -105,6 +150,7 @@ export default function SignUp(props) {
                 size="small"
                 fullWidth
                 autoFocus
+                disabled={isDisable}
                 value={firstName}
                 onChange={(event)=>setFirstName(event.target.value.trim())}
               />
@@ -117,6 +163,7 @@ export default function SignUp(props) {
                 size="small"
                 variant="outlined"
                 fullWidth
+                disabled={isDisable}
                 value={lastName}
                 onChange={(event)=>setLastName(event.target.value.trim())}
               />
@@ -130,6 +177,7 @@ export default function SignUp(props) {
                 variant="outlined"
                 required
                 fullWidth
+                disabled
                 value={userName}
                 error={(showValidateError && userName === "")||(userExistError === "userName")}
                 onChange={(event)=>setUserName(event.target.value.trim())}
@@ -143,6 +191,7 @@ export default function SignUp(props) {
                 type="password"
                 size="small"
                 variant="outlined"
+                disabled={isDisable}
                 required
                 fullWidth
                 value={password}
@@ -158,6 +207,7 @@ export default function SignUp(props) {
                 type="password"
                 size="small"
                 variant="outlined"
+                disabled={isDisable}
                 required
                 fullWidth
                 value={reTypePassword}
@@ -174,6 +224,7 @@ export default function SignUp(props) {
                 type="email"
                 variant="outlined"
                 size="small"
+                disabled={isDisable}
                 required
                 fullWidth
                 value={emailId}
@@ -190,6 +241,7 @@ export default function SignUp(props) {
                 variant="outlined"
                 type="number"
                 size="small"
+                disabled
                 required
                 fullWidth
                 value={phoneNo}
@@ -203,6 +255,7 @@ export default function SignUp(props) {
                  name="d_o_b"
                  label="Birthday"
                  type="date"
+                 disabled={isDisable}
                  fullWidth
                  size="small"
                  variant="outlined"
@@ -218,6 +271,7 @@ export default function SignUp(props) {
                 variant="outlined"
                 size="small"
                 fullWidth
+                disabled={isDisable}
                 value={company}
                 onChange={(event)=>setCompany(event.target.value.trim())}
                 />
@@ -230,29 +284,51 @@ export default function SignUp(props) {
                 type ="number"
                 variant="outlined"
                 size="small"
+                disabled={isDisable}
                 fullWidth
                 value={experience}
                 onChange={(event)=>setExperience(event.target.value.trim())}
               />
             </Grid>
           </Grid>
-          <Button
+          {isDisable ? <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            style={{marginTop:"16px"}}
-            onClick={onRegisterClick}
+            style={{margin:"16px 0px 16px 0px"}}
+            onClick={onEditClick}
           >
-            Sign Up
+            Edit Profile
           </Button>
-          <Grid container justify="center" style={{padding:'16px'}}>
-            <Grid item>
-              <Link  variant="body2" onClick={() => history.push("/login")}>
-                Already have an account? Sign in
-              </Link>
-            </Grid>
+           : null}
+          {!isDisable ?<Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="default"
+            onClick={onCancelClick}
+            style={{margin:"16px 0px 16px 0px"}}
+            fullWidth
+          >
+            Cancel
+          </Button>
           </Grid>
+          <Grid item xs={12} sm={6}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={onSaveClick}
+            style={{margin:"16px 0px 16px 0px"}}
+            fullWidth
+          >
+            Save
+          </Button>
+          </Grid>
+          </Grid>
+          : null}
       </div>
       </Container>
   );
@@ -264,5 +340,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    position:"relative",
   },
 }));
