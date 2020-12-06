@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -10,6 +10,8 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Typography from '@material-ui/core/Typography';
 import { forgetPassword , updatePassword } from '../service/authenticationService';
+import * as encryptUtil from '../utils/encryptUtil';
+import { viewProfile } from '../service/profileService';
 
 export default function Otp(props) {
   const classes = useStyles();
@@ -27,6 +29,15 @@ export default function Otp(props) {
   const [secretOtp,setSecretOtp] = useState(null);
   const [passwordError,setPasswordError] = useState(false);
 
+
+  useEffect(() =>{
+    viewProfile().then((response) =>{
+        if(response?.userData){
+          history.push("/home");
+        }
+      });
+   },[]);
+
   const onOTPClick = (event) => {
     let isValidateError;
     if(userName === "" ){
@@ -42,8 +53,7 @@ export default function Otp(props) {
       forgetPassword(userName , parseInt(userName)).then((response) =>{
         if(response?.otp){
           let otp = response.otp;
-          console.log(otp);
-          setSecretOtp(otp);
+          setSecretOtp(parseInt(otp));
           setShowOTP(true);
         }
       });
@@ -92,7 +102,8 @@ export default function Otp(props) {
         if(isValidateError){
             return
         }
-        updatePassword(userName , parseInt(userName),password).then(() =>{
+        let pwd= encryptUtil.getEncrypt(password.toString());
+        updatePassword(userName , parseInt(userName),pwd).then(() =>{
           history.push('/login');
         });
         event.preventDefault();

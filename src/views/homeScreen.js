@@ -2,7 +2,7 @@ import React,{useState, useEffect} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import SupervisedUserCircleOutlined from '@material-ui/icons/SupervisedUserCircleOutlined';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,6 +11,7 @@ import { useHistory } from 'react-router-dom';
 import {  toast } from 'react-toastify';
 import { viewProfile , updateProfile } from '../service/profileService';
 import { logout } from '../service/authenticationService';
+import * as encryptUtil from '../utils/encryptUtil';
 
 export default function Home(props) {
   const classes = useStyles();
@@ -22,25 +23,27 @@ export default function Home(props) {
   const [password,setPassword] = useState('');
   const [reTypePassword,setReTypePassword] = useState('');
   const [emailId,setEmailId] = useState('');
-  const [phoneNo,setPhoneNo] = useState('');
+  const [phoneNo,setPhoneNo] = useState(0);
   const [dateOfBirth,setDateOfBirth] = useState('2017-05-24');
   const [company,setCompany] = useState('');
-  const [experience,setExperience] = useState('');
+  const [experience,setExperience] = useState(0);
   const [showValidateError,setShowValidateError] = useState(false);
   const [passwordError,setPasswordError] = useState(false);
   const [emailError,setEmailError] = useState(false);
   const [userExistError,setUserExistError] = useState("");
   const [isDisable,setIsDisable] = useState(true);
+  const [showLoader,setShowLoader] = useState(true);
 
   useEffect(() =>{
     viewProfile().then((response) =>{
         if(response?.userData){
             let userData = response.userData;
+            let password = encryptUtil.deEncrypt(userData.password);
             setFirstName(userData.first_name);
             setLastName(userData.last_name);
             setUserName(userData.user_name);
-            setPassword(userData.password);
-            setReTypePassword(userData.password);
+            setPassword(password);
+            setReTypePassword(password);
             setEmailId(userData.email_id);
             setPhoneNo(userData.phone_no);
             setDateOfBirth(userData.d_o_b);
@@ -49,7 +52,9 @@ export default function Home(props) {
           }else{
             history.push("/login");
           }
+          setShowLoader(false);
     }).catch(() =>{
+        setShowLoader(false);
        history.push("/login");
     });
   },[]);
@@ -94,8 +99,9 @@ const onCancelClick = () =>{
  if(isValidateError){
    return;
  }
+ let pwd= encryptUtil.getEncrypt(password.toString());
  let updateMap = {user_name : userName, 
-           password , phone_no : phoneNo,
+           password :pwd , phone_no : phoneNo,
            email_id : emailId, 
            first_name : firstName,
            last_name : lastName,
@@ -121,7 +127,9 @@ const onCancelClick = () =>{
 
 
   return (
-    <Container maxWidth="xs" style={{background:"#ffff", borderRadius:"5px"}} >
+      <Container maxWidth="xs" style={{background:"#ffff", borderRadius:"5px"}} >
+      {showLoader ? <CircularProgress style={{marginTop: "16px",
+                 position: "absolute"}} /> : null}
       <div className={classes.container}>
         <Avatar style={{ 
           background: 'linear-gradient(48deg, rgb(38 194 199 / 58%) 30%, rgb(0 43 255 / 99%) 90%)',

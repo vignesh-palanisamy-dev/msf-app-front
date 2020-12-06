@@ -1,7 +1,7 @@
 import {  toast } from 'react-toastify';
 
 function handleResponse(response) {
-    if(response?.data?.result?.msg){
+    if(response?.data?.result?.msg && !response.config.url.includes("viewProfile")){
         toast.success(response.data.result.msg);
     }
     return response.data.result;

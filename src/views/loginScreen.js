@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -10,6 +10,8 @@ import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
 import {  toast } from 'react-toastify';
 import { login } from '../service/authenticationService';
+import * as encryptUtil from '../utils/encryptUtil';
+import { viewProfile } from '../service/profileService';
 
 export default function LogIn(props) {
   const classes = useStyles();
@@ -18,6 +20,15 @@ export default function LogIn(props) {
   const [userName,setUserName] = useState('');
   const [password,setPassword] = useState('');
   const [showValidateError,setShowValidateError] = useState(false);
+
+
+  useEffect(() =>{
+    viewProfile().then((response) =>{
+        if(response?.userData){
+          history.push("/home");
+        }
+      });
+   },[]);
 
   const onLoginClick = (event) => {
     let isValidateError;
@@ -31,7 +42,8 @@ export default function LogIn(props) {
     if(isValidateError){
       return;
     }
-    login(userName,parseInt(userName), password).then(()=>{
+    let pwd= encryptUtil.getEncrypt(password.toString());
+    login(userName,parseInt(userName), pwd).then(()=>{
       history.push("/home");
     });
     event.preventDefault();
