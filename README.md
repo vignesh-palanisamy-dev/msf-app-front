@@ -2,7 +2,7 @@
 Front Repository For System Task In Market Simplified
 
 Requirements :
-1. Node / npn
+1. Node / npm
 2. Postgresql pgAdmin
 
 Steps to run : 
